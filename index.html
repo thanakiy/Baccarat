@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baccarat Analyzer</title>
+  <style>
+    body {
+      background: #0a3d1a;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: gold;
+    }
+    .buttons {
+      margin: 20px 0;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .player { background: #007bff; }
+    .banker { background: #dc3545; }
+    .tie { background: #28a745; }
+    .reset { background: gray; }
+    .stats {
+      margin-top: 20px;
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎲 Baccarat Analyzer 🎲</h1>
+
+  <div class="buttons">
+    <button class="player" onclick="recordResult('Player')">Player</button>
+    <button class="banker" onclick="recordResult('Banker')">Banker</button>
+    <button class="tie" onclick="recordResult('Tie')">Tie</button>
+    <br>
+    <button class="reset" onclick="resetStats()">Reset</button>
+  </div>
+
+  <div class="stats">
+    <h2>📊 สถิติ</h2>
+    <p id="playerCount">Player: 0</p>
+    <p id="bankerCount">Banker: 0</p>
+    <p id="tieCount">Tie: 0</p>
+    <p id="totalCount">Total Games: 0</p>
+    <p id="percentages"></p>
+    <h3>📈 แนวโน้มล่าสุด</h3>
+    <p id="history">-</p>
+  </div>
+
+<script>
+  let stats = JSON.parse(localStorage.getItem('baccaratStats')) || {
+    Player: 0,
+    Banker: 0,
+    Tie: 0,
+    History: []
+  };
+
+  function saveStats() {
+    localStorage.setItem('baccaratStats', JSON.stringify(stats));
+  }
+
+  function recordResult(result) {
+    stats[result]++;
+    stats.History.push(result);
+    if (stats.History.length > 20) stats.History.shift(); // เก็บล่าสุด 20 ตา
+    saveStats();
+    updateUI();
+  }
+
+  function resetStats() {
+    stats = { Player: 0, Banker: 0, Tie: 0, History: [] };
+    saveStats();
+    updateUI();
+  }
+
+  function updateUI() {
+    document.getElementById('playerCount').innerText = `Player: ${stats.Player}`;
+    document.getElementById('bankerCount').innerText = `Banker: ${stats.Banker}`;
+    document.getElementById('tieCount').innerText = `Tie: ${stats.Tie}`;
+    let total = stats.Player + stats.Banker + stats.Tie;
+    document.getElementById('totalCount').innerText = `Total Games: ${total}`;
+    
+    if (total > 0) {
+      let pPct = ((stats.Player / total) * 100).toFixed(1);
+      let bPct = ((stats.Banker / total) * 100).toFixed(1);
+      let tPct = ((stats.Tie / total) * 100).toFixed(1);
+      document.getElementById('percentages').innerText =
+        `Player ${pPct}% | Banker ${bPct}% | Tie ${tPct}%`;
+    } else {
+      document.getElementById('percentages').innerText = '';
+    }
+
+    document.getElementById('history').innerText = stats.History.join(' → ') || '-';
+  }
+
+  updateUI();
+</script>
+
+</body>
+</html>
