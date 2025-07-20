@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Baccarat Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b3d0b;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: gold;
+    }
+    .card-area {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px;
+    }
+    .hand {
+      background: rgba(255,255,255,0.1);
+      padding: 10px;
+      border-radius: 10px;
+      width: 40%;
+    }
+    .result {
+      font-size: 1.5rem;
+      margin-top: 20px;
+    }
+    button {
+      background: gold;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎲 Baccarat Game 🎲</h1>
+  <div class="card-area">
+    <div class="hand">
+      <h2>Player</h2>
+      <div id="player-cards">-</div>
+      <p>Score: <span id="player-score">0</span></p>
+    </div>
+    <div class="hand">
+      <h2>Banker</h2>
+      <div id="banker-cards">-</div>
+      <p>Score: <span id="banker-score">0</span></p>
+    </div>
+  </div>
+  <button onclick="playBaccarat()">Play</button>
+  <div class="result" id="result">Click Play to start!</div>
+
+  <script>
+    function drawCard() {
+      let card = Math.floor(Math.random() * 13) + 1;
+      if (card > 10) return 0; // J,Q,K = 0
+      return card;
+    }
+
+    function baccaratScore(cards) {
+      let sum = cards.reduce((a, b) => a + b, 0);
+      return sum % 10; // baccarat rule
+    }
+
+    function playBaccarat() {
+      let playerCards = [drawCard(), drawCard()];
+      let bankerCards = [drawCard(), drawCard()];
+
+      let playerScore = baccaratScore(playerCards);
+      let bankerScore = baccaratScore(bankerCards);
+
+      document.getElementById("player-cards").innerText = playerCards.join(", ");
+      document.getElementById("banker-cards").innerText = bankerCards.join(", ");
+      document.getElementById("player-score").innerText = playerScore;
+      document.getElementById("banker-score").innerText = bankerScore;
+
+      let resultText = "";
+      if (playerScore > bankerScore) {
+        resultText = "🎉 Player Wins!";
+      } else if (bankerScore > playerScore) {
+        resultText = "🏦 Banker Wins!";
+      } else {
+        resultText = "🤝 Tie!";
+      }
+
+      document.getElementById("result").innerText = resultText;
+    }
+  </script>
+</body>
+</html>
